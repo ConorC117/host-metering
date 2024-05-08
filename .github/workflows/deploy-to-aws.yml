@@ -1,0 +1,24 @@
+name: AWS Image
+
+on:
+  workflow_dispatch:
+
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+  
+      - name: Deploy AWS EC2 instance
+        run: |
+          aws ec2 run-instances --image-id ami-004fac3d4533a2541 --count 1 --instance-type t3a.small --debug --key-name ${{ secrets.EC2_KEY_NAME }}
+          echo "Deployed?"
